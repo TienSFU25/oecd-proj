@@ -16,17 +16,26 @@ var colorScale = d3.scaleThreshold()
     .domain([100000, 1000000, 10000000, 30000000, 100000000, 500000000])
     .range(d3.schemeBlues[7]);
 
-// Load external data and boot
-d3.queue()
-    .defer(d3.json, "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
-    .defer(d3.csv, "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world_population.csv", function(d) { data.set(d.code, +d.pop); })
-    .await(ready);
+const geographyDataLoc = "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson";
+const worldTopologyDataLoc = "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world_population.csv";
 
-function ready(error, topo) {
+const dataPromises = [
+    d3.json(geographyDataLoc),
+    d3.csv(worldTopologyDataLoc)
+];
+
+Promise.all(dataPromises).then(values => {
+    values[1].map((value, index) => {
+        data.set(value.code, +value.pop);
+    });
+    ready(values[0]);
+}).catch(error => console.error(`Error in data fetching ${error}`));
+
+function ready(worldTopology) {
     // Draw the map
     svg.append("g")
         .selectAll("path")
-        .data(topo.features)
+        .data(worldTopology.features)
         .enter()
         .append("path")
         // draw each country
