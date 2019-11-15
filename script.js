@@ -2,10 +2,14 @@ const noop = (e) => {d3.event.stopPropagation()};
 const geographyDataLoc = "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson";
 const worldTopologyDataLoc = "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world_population.csv";
 
+const margin = {top: 40, right: 20, bottom: 30, left: 40},
+    width = window.innerWidth - margin.left - margin.right,
+    height = window.innerHeight - margin.top - margin.bottom;
+
 // The svg
-var svg = d3.select("svg"),
-    width = +svg.attr("width"),
-    height = +svg.attr("height");
+var svg = d3.select("svg")
+    .attr("width", width)
+    .attr("height", height);
 
 // Map and projection
 var projection = d3.geoMercator()
