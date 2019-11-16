@@ -51,7 +51,6 @@ function createDropDown(div_id){
     }
     document.querySelector(div_id).appendChild(select);
 
-
     document.getElementById("viz-2-select").addEventListener("change", function (sel){
         let currentC = sel.srcElement.value;
         console.log(currentC);
@@ -77,7 +76,7 @@ function updateBarPlot(country, data){
     console.log(myheight);
 
 
-    var margin = {top: 0, right: 0, bottom: 180, left: 10},
+    var margin = {top: 0, right: 0, bottom: 200, left: 10},
         width = 2200 - margin.left - margin.right,
         height = myheight - margin.top - margin.bottom;
 
@@ -85,6 +84,7 @@ function updateBarPlot(country, data){
     // let svg=d3.select("#lineplot");
     //let svg=d3.select("#lineplot");
     let svg = quads[2];
+
     svg.selectAll("*").remove();
     svg.attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
@@ -140,16 +140,38 @@ function updateBarPlot(country, data){
             .y(function(d,i) { return y(1) })
         );
 
-    // Add the line
+    // Add the green regions
     svg.append("path")
         .datum(data)
-        .attr("fill", "#EEE")
+        .attr("fill", function(d,i){
+            //let v = parseFloat(d.value);
+            let v = 0.55;
+            console.log(d);
+            if(v>=0.5){return '#BFB';}else{return '#FBB';}
+        })
         .attr("stroke", "none")
         .attr("stroke-width", 1)
         .attr("d", d3.area()
             .x(function(d,i) { return x(d.key) })
             .y0(function(d) { return y(0) })
-            .y1(function(d) { return y(d.value) })
+            .y1(function(d) { if (d.value>0) {return y(d.value)}else{return y(0)} })
+        );
+
+    // Add the red regions
+    svg.append("path")
+        .datum(data)
+        .attr("fill", function(d,i){
+            //let v = parseFloat(d.value);
+            let v = 0.55;
+            console.log(d);
+            if(v>=0.5){return '#FBB';}else{return '#BFB';}
+        })
+        .attr("stroke", "none")
+        .attr("stroke-width", 1)
+        .attr("d", d3.area()
+            .x(function(d,i) { return x(d.key) })
+            .y0(function(d) { return y(0) })
+            .y1(function(d) { if (d.value<0) {return y(d.value)}else{return y(0)} })
         );
 
     // // Add the line
