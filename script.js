@@ -13,10 +13,11 @@ const actualHeight = height - margin.top - margin.bottom;
 let featureBounds;
 let geoLayer = {};
 let singleViewWidth = actualWidth / 2;
+
 let singleViewHeight = actualHeight / 2;
 
 // The svg
-var svg = d3.select("svg")
+var svg = d3.select("svg#my_dataviz")
     .attr("width", actualWidth)
     .attr("height", actualHeight);
 
