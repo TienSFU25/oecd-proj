@@ -16,6 +16,7 @@ function loadSkillData(path){
             _cdata  = data;
 
             console.log("skills data loaded");
+
             for(let row in _cdata){
                let c = _cdata[row]['Country'];
 
@@ -66,18 +67,24 @@ function updateBarPlot(country, data){
 
     //// plot the skill data as a point
     // set the dimensions and margins of the graph
-    mywidth = $("#lineplot").width();
-    myheight = $("#lineplot").height();
+    //mywidth = $("#lineplot").width();
+    //myheight = $("#lineplot").height();
+
+    let mywidth = singleViewWidth    ;
+    let myheight = singleViewHeight;
     console.log("XXXXXXXXXXXXXXX");
     console.log(mywidth);
     console.log(myheight);
-    var margin = {top: 0, right: 0, bottom: 180, left: 0},
+
+
+    var margin = {top: 0, right: 0, bottom: 180, left: 10},
         width = 2200 - margin.left - margin.right,
         height = myheight - margin.top - margin.bottom;
 
 
     // let svg=d3.select("#lineplot");
-    let svg=d3.select("#lineplot");
+    //let svg=d3.select("#lineplot");
+    let svg = quads[2];
     svg.selectAll("*").remove();
     svg.attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
@@ -88,16 +95,16 @@ function updateBarPlot(country, data){
     var x = d3.scaleBand()
         .domain(data.map( function(d,i) {
             return d.key; }))
-        .rangeRound([20, width])
+        .rangeRound([0, width])
         .padding(0.1);
 
     svg.append("g")
         .attr("transform", "translate(0," + height + ")")
         .call(d3.axisBottom(x))
         .selectAll("text")
-        .attr("y", 0)
+        .attr("y", 20)
         .attr("x", 9)
-        .attr("dy", ".35em")
+        .attr("dy", ".5em")
         .attr("transform", "rotate(90)")
         .style("text-anchor", "start");
 
@@ -107,6 +114,8 @@ function updateBarPlot(country, data){
         .range([height, 10]);
 
     svg.append("g")
+        .attr("class", "y axis")
+        .attr("transform", "translate(" + width + ",0)")
         .call(d3.axisLeft(y));
 
     // Add the line
@@ -134,25 +143,23 @@ function updateBarPlot(country, data){
     // Add the line
     svg.append("path")
         .datum(data)
-        .attr("fill", "none")
-        .attr("stroke", "green")
+        .attr("fill", "#EEE")
+        .attr("stroke", "none")
         .attr("stroke-width", 1)
-        .attr("d", d3.line()
+        .attr("d", d3.area()
             .x(function(d,i) { return x(d.key) })
-            .y(function(d,i) { return y(0) })
-        );
-    // Add the line
-    svg.append("path")
-        .datum(data)
-        .attr("fill", "none")
-        .attr("stroke", "black")
-        .attr("stroke-width", 1)
-        .attr("d", d3.line()
-            .x(function(d,i) { return x(d.key) })
-            .y(function(d,i) { return y(-1) })
+            .y0(function(d) { return y(0) })
+            .y1(function(d) { return y(d.value) })
         );
 
-
-
-
+    // // Add the line
+    // svg.append("path")
+    //     .datum(data)
+    //     .attr("fill", "none")
+    //     .attr("stroke", "black")
+    //     .attr("stroke-width", 1)
+    //     .attr("d", d3.line()
+    //         .x(function(d,i) { return x(d.key) })
+    //         .y(function(d,i) { return y(-1) })
+    //     );
 }
