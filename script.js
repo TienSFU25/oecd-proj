@@ -21,13 +21,6 @@ var container = d3.select("#container");
 
 // just use a default projection
 // projection = d3.geoEqualEarth();
-var projection = d3.geoNaturalEarth1();
-
-// Data and color scale
-var data = d3.map();
-var colorScale = d3.scaleThreshold()
-    .domain([100000, 1000000, 10000000, 30000000, 100000000, 500000000])
-    .range(d3.schemeBlues[7]);
 
 const dataPromises = [
     d3.json(geographyDataLoc),
@@ -37,10 +30,7 @@ const dataPromises = [
 ];
 
 Promise.all(dataPromises).then(values => {
-    values[1].map((value) => {
-        data.set(value.code, +value.pop);
-    });
-    drawWorldView(values[0]);
+    drawWorldView(values[0], values[3]);
     drawBoxPlot(values[3]);
 }).catch(error => console.error(`Error in data fetching ${error}`));
 
@@ -118,11 +108,36 @@ function fitGeoInside() {
         ].join(' '));
 }
 
-function drawWorldView(worldTopology) {
+function drawWorldView(geography, worldTopology) {
+    let dataBySkills = d3.nest().key(function(d) { return `${d.Type}/${d.Skills}`;}).entries(worldTopology);
+
+    const allCountryNames = new Set();
+    const countriesWithData = new Set();
+    geography.features.map(v => allCountryNames.add(v.id));
+
+    var projection = d3.geoNaturalEarth1();
+    var mapData = d3.map();
+    var colorScale = d3.scaleThreshold()
+        .domain([-1, -0.5, 0, 0.5, 1])
+        .range(["#ffffff"].concat(d3.schemeBlues[5]));
+    
+    var entriesForSkill = dataBySkills[0];
+
+    entriesForSkill.values.map((entry) => {
+        countriesWithData.add(entry.LOCATION);
+        mapData.set(entry.LOCATION, +entry.Value);
+    });
+
+    const countriesWithNoData = new Set([...allCountryNames].filter(x => !countriesWithData.has(x)));
+    Array.from(countriesWithNoData).map((countryName) => {
+        // set this as the first color
+        mapData.set(countryName, -2);
+    });
+
     // Draw the map
     let mapGroup = theMap
         .selectAll("path")
-        .data(worldTopology.features)
+        .data(geography.features)
         .enter()
         .append("g");
 
@@ -130,7 +145,7 @@ function drawWorldView(worldTopology) {
 
     var collection = {
         'type': 'FeatureCollection',
-        'features' : worldTopology.features
+        'features' : geography.features
       };
 
     featureBounds = path.bounds(collection);
@@ -140,7 +155,7 @@ function drawWorldView(worldTopology) {
         .attr("d", path)
         // set the color of each country
         .attr("fill", function (d) {
-            d.total = data.get(d.id) || 0;
+            d.total = mapData.get(d.id) || 0;
             return colorScale(d.total);
         })
         .style("stroke", "transparent")
