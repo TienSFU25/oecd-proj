@@ -1,9 +1,15 @@
 let geoLayer = {};
 let featureBounds;
+let zoom = 1.1;
+let unknownColorFill = "#ffffff";
 
-var theMap = quads[0]
+// works on 1130 * 754, again we not trying to make this responsive
+var mapViewport = quads[0]
+    .append("svg")
+    .attr("viewBox", `${singleViewWidth / 14}, 0, ${singleViewWidth / zoom}, ${singleViewHeight / zoom}`);
+
+var theMap = mapViewport   
     .append("g");
-
 
 function getFeaturesBox() {
     return {
@@ -34,14 +40,32 @@ function drawWorldView(geography, worldTopology) {
 
     const allCountryNames = new Set();
     const countriesWithData = new Set();
+
+    // ignore Antartica
+    geography.features = geography.features.filter((v) => {
+        return v.id !== "ATA";
+    });
+
     geography.features.map(v => allCountryNames.add(v.id));
 
     var projection = d3.geoNaturalEarth1();
     var mapData = d3.map();
-    var colorScale = d3.scaleThreshold()
-        .domain([-1, -0.5, 0, 0.5, 1])
-        .range(["#ffffff"].concat(d3.schemeBlues[5]));
-    
+
+    var colorScale = d3.scaleQuantize()
+        .domain([-1, 1])
+        .range(d3.schemePuOr[8]);
+
+    var mylegend = legend({
+        color: colorScale,
+        title: "Skill demands",
+        tickSize: 0,
+        width: singleViewWidth / 2.5
+    });
+
+    quads[0].append("g")
+        .attr("transform", `translate(${singleViewWidth / 1.8}, ${singleViewHeight / 30})`)
+        .append(() => mylegend);
+ 
     var entriesForSkill = dataBySkills[0];
 
     entriesForSkill.values.map((entry) => {
@@ -51,7 +75,6 @@ function drawWorldView(geography, worldTopology) {
 
     const countriesWithNoData = new Set([...allCountryNames].filter(x => !countriesWithData.has(x)));
     Array.from(countriesWithNoData).map((countryName) => {
-        // set this as the first color
         mapData.set(countryName, -2);
     });
 
@@ -67,7 +90,7 @@ function drawWorldView(geography, worldTopology) {
     var collection = {
         'type': 'FeatureCollection',
         'features' : geography.features
-      };
+    };
 
     featureBounds = path.bounds(collection);
 
@@ -76,7 +99,12 @@ function drawWorldView(geography, worldTopology) {
         .attr("d", path)
         // set the color of each country
         .attr("fill", function (d) {
-            d.total = mapData.get(d.id) || 0;
+            d.total = mapData.get(d.id);
+
+            if (Math.abs(d.total) > 1) {
+                return unknownColorFill;
+            }
+
             return colorScale(d.total);
         })
         .style("stroke", "transparent")
@@ -87,7 +115,8 @@ function drawWorldView(geography, worldTopology) {
         d3.selectAll(".Country")
             .transition()
             .duration(200)
-            .style("opacity", .5);
+            .style("opacity", .5)
+            .style("stroke", "none");
         d3.select(this)
             .select("path")
             .transition()
