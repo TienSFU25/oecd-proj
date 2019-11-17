@@ -3,23 +3,20 @@ const geographyDataLoc = "https://raw.githubusercontent.com/holtzy/D3-graph-gall
 const worldTopologyDataLoc = "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world_population.csv";
 const irisDataLoc = "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/iris.csv";
 
-const margin = {top: 10, right: 0, bottom: 0, left: 10},
+const margin = {top: 30, right: 0, bottom: 0, left: 10},
     width = window.innerWidth - margin.left - margin.right,
     height = window.innerHeight - margin.top - margin.bottom;
 
 const actualWidth = width - margin.left - margin.right;
 const actualHeight = height - margin.top - margin.bottom;
+const widthOffset = 15;
 
 let featureBounds;
 let geoLayer = {};
-let singleViewWidth = actualWidth / 2;
+let singleViewWidth = actualWidth / 2 - widthOffset;
+let singleViewHeight = actualHeight / 2 - widthOffset;
 
-let singleViewHeight = actualHeight / 2;
-
-// The svg
-var svg = d3.select("svg#my_dataviz")
-    .attr("width", actualWidth)
-    .attr("height", actualHeight);
+var container = d3.select("#container");
 
 // just use a default projection
 // projection = d3.geoEqualEarth();
@@ -45,17 +42,19 @@ Promise.all(dataPromises).then(values => {
     drawBoxPlot(values[2]);
 }).catch(error => console.error(`Error in data fetching ${error}`));
 
-var layout = svg
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
 let quads = [];
 // make our layout
 for (let i = 0; i < 2; i++) {
+    let row = container.append("div")
+        .attr("class", "row");
+
     for (let j = 0; j < 2; j++) {
-        let quad = layout.append("g")
-            .attr("transform", "translate(" + singleViewWidth*i + "," + singleViewHeight*j + ")");
+        let quad = row.append("div")
+            .attr("class", "scroll column")
+            .attr("style", `width: ${singleViewWidth+widthOffset}`)
+            .append("svg")
+            .attr("width", singleViewWidth)
+            .attr("height", singleViewHeight);
 
         // just to make a checkered layout
         let opacity = (i + j) % 2 == 0 ? 0.3 : 0.1;
@@ -189,6 +188,9 @@ function drawWorldView(worldTopology) {
 }
 
 function drawBoxPlot(data) {
+    const boxPlotWidth = 2 * singleViewWidth;
+    quads[2].attr("width", boxPlotWidth);
+
     // pretty random constants...not exactly responsive
     // we will need to tweak this to fit the screen
     const boxScale = 0.9;
@@ -217,7 +219,7 @@ function drawBoxPlot(data) {
         .paddingInner(1)
         .paddingOuter(.5);
 
-    var boxplot = quads[1].append("g")
+    var boxplot = quads[2].append("g")
         .attr("transform", `scale(${boxScale}) translate(${boxLeftShift}, ${boxDownShift})`);
 
     boxplot.append("g")

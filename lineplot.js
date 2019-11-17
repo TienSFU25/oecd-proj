@@ -84,7 +84,7 @@ function updateBarPlot(country, data){
 
     // let svg=d3.select("#lineplot");
     //let svg=d3.select("#lineplot");
-    let svg = quads[2];
+    let svg = quads[1];
 
     svg.selectAll("*").remove();
     svg.attr("width", width + margin.left + margin.right)
