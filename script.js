@@ -2,6 +2,7 @@ const noop = (e) => {d3.event.stopPropagation()};
 const geographyDataLoc = "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson";
 const worldTopologyDataLoc = "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world_population.csv";
 const irisDataLoc = "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/iris.csv";
+const skillsDataLoc = "https://raw.githubusercontent.com/cusoh/data_skills/master/SKILLS_2018_TOTAL_25102019044734209.csv";
 
 const margin = {top: 30, right: 0, bottom: 0, left: 10},
     width = window.innerWidth - margin.left - margin.right,
@@ -31,7 +32,8 @@ var colorScale = d3.scaleThreshold()
 const dataPromises = [
     d3.json(geographyDataLoc),
     d3.csv(worldTopologyDataLoc),
-    d3.csv(irisDataLoc)
+    d3.csv(irisDataLoc),
+    d3.csv(skillsDataLoc)
 ];
 
 Promise.all(dataPromises).then(values => {
@@ -39,7 +41,7 @@ Promise.all(dataPromises).then(values => {
         data.set(value.code, +value.pop);
     });
     drawWorldView(values[0]);
-    drawBoxPlot(values[2]);
+    drawBoxPlot(values[3]);
 }).catch(error => console.error(`Error in data fetching ${error}`));
 
 let quads = [];
@@ -188,48 +190,51 @@ function drawWorldView(worldTopology) {
 }
 
 function drawBoxPlot(data) {
-    const boxPlotWidth = 2 * singleViewWidth;
-    quads[2].attr("width", boxPlotWidth);
+    const boxScale = 0.9;
+    const boxPlotWidth = 25 * singleViewWidth;
+
+    const boxplotHeight = singleViewHeight * 0.7;
 
     // pretty random constants...not exactly responsive
     // we will need to tweak this to fit the screen
-    const boxScale = 0.9;
     const boxLeftShift = singleViewWidth * (1 - boxScale) / 2;
-    const boxDownShift = singleViewHeight * (1 - boxScale) / 3;
+    const boxDownShift = boxplotHeight * (1 - boxScale) / 3;
 
     // Compute quartiles, median, inter quantile range min and max --> these info are then used to draw the box.
     var sumstat = d3.nest() // nest function allows to group the calculation per level of a factor
-        .key(function(d) { return d.Species;})
+        .key(function(d) { return `${d.Type}/${d.Skills}`;})
         .rollup(function(d) {
-            q1 = d3.quantile(d.map(function(g) { return g.Sepal_Length;}).sort(d3.ascending),.25)
-            median = d3.quantile(d.map(function(g) { return g.Sepal_Length;}).sort(d3.ascending),.5)
-            q3 = d3.quantile(d.map(function(g) { return g.Sepal_Length;}).sort(d3.ascending),.75)
-            interQuantileRange = q3 - q1
-            min = q1 - 1.5 * interQuantileRange
-            max = q3 + 1.5 * interQuantileRange
-            
+            q1 = d3.quantile(d.map(function(g) { return g.Value;}).sort(d3.ascending),.25);
+            median = d3.quantile(d.map(function(g) { return g.Value;}).sort(d3.ascending),.5);
+            q3 = d3.quantile(d.map(function(g) { return g.Value;}).sort(d3.ascending),.75);
+            interQuantileRange = q3 - q1;
+            min = q1 - 1.5 * interQuantileRange;
+            max = q3 + 1.5 * interQuantileRange;
+
             return({q1: q1, median: median, q3: q3, interQuantileRange: interQuantileRange, min: min, max: max})
         })
         .entries(data);
 
+    let domain = d3.nest().key(function(d) { return `${d.Type}/${d.Skills}`;}).entries(data).map(v => v.key);
+
     // Show the X scale
     var x = d3.scaleBand()
-        .range([ 0, singleViewWidth ])
-        .domain(["setosa", "versicolor", "virginica"])
+        .range([ 0, boxPlotWidth ])
+        .domain(domain)
         .paddingInner(1)
         .paddingOuter(.5);
 
     var boxplot = quads[2].append("g")
         .attr("transform", `scale(${boxScale}) translate(${boxLeftShift}, ${boxDownShift})`);
 
-    boxplot.append("g")
-        .attr("transform", `translate(0, ${singleViewHeight})`)
+    var xAxis = boxplot.append("g")
+        .attr("transform", `translate(0, ${boxplotHeight})`)
         .call(d3.axisBottom(x));
 
     // Show the Y scale
     var y = d3.scaleLinear()
-        .domain([3,9])
-        .range([singleViewHeight, 0])
+        .domain([-1,1])
+        .range([boxplotHeight, 0])
     boxplot.append("g")
         .call(d3.axisLeft(y));
 
@@ -244,10 +249,18 @@ function drawBoxPlot(data) {
         .attr("y1", function(d){return(y(d.value.min))})
         .attr("y2", function(d){return(y(d.value.max))})
         .attr("stroke", "black")
-        .style("width", 40);
+        .style("width", 40)
+        
+    xAxis.selectAll("text")	
+        .style("text-anchor", "end")
+        // .attr("dx", "-.8em")
+        // .attr("dy", ".15em")
+        .attr("transform", function(d) {
+            return "rotate(-65)" 
+        });
 
     // rectangle for the main box
-    var boxWidth = 100
+    var boxWidth = 10;
     boxplot
         .selectAll("boxes")
         .data(sumstat)
@@ -255,7 +268,7 @@ function drawBoxPlot(data) {
         .append("rect")
             .attr("x", function(d){return(x(d.key)-boxWidth/2)})
             .attr("y", function(d){return(y(d.value.q3))})
-            .attr("height", function(d){return(y(d.value.q1)-y(d.value.q3))})
+            .attr("height", function(d){return(Math.abs(y(d.value.q1)-y(d.value.q3)))})
             .attr("width", boxWidth )
             .attr("stroke", "black")
             .style("fill", "#69b3a2");
@@ -272,4 +285,7 @@ function drawBoxPlot(data) {
         .attr("y2", function(d){return(y(d.value.median))})
         .attr("stroke", "black")
         .style("width", 80);
+    
+    // need to put this at the end or the svg overscales
+    quads[2].attr("width", boxPlotWidth * boxScale + 50);
 }

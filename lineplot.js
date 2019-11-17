@@ -7,7 +7,7 @@ window.onload = function(){
     //console.log("Create a global variable named \"_data\"");
     //loadMapData("world-110m2.json");
     //loadSkillData('SKILLS_2018_TOTAL_25102019044734209.csv');
-    loadSkillData('https://raw.githubusercontent.com/cusoh/data_skills/master/SKILLS_2018_TOTAL_25102019044734209.csv');
+    loadSkillData(skillsDataLoc);
     createDropDown("#dropdown");
 };
 
