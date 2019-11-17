@@ -67,7 +67,17 @@ function drawWorldView(geography, worldTopology) {
         .append(() => mylegend);
  
     var entriesForSkill = dataBySkills[0];
+    var skillName = entriesForSkill.key;
 
+    // stick in the textbox
+    var textbox = quads[0].append("g");
+    textbox.append("text")
+        .attr("x", singleViewWidth / 20)
+        .attr("y", singleViewHeight / 9)
+        // .attr("dy", ".35em")
+        .text(skillName);
+
+    // fill up map data (value that will show on choropleth)
     entriesForSkill.values.map((entry) => {
         countriesWithData.add(entry.LOCATION);
         mapData.set(entry.LOCATION, +entry.Value);
@@ -130,9 +140,6 @@ function drawWorldView(geography, worldTopology) {
             .style("opacity", .9);
 
         updateTooltip(data);
-    })
-    .on("mousemove", function (data) {
-        // updateTooltip(data);
     })
     .on("mouseleave", function(data) {
         d3.selectAll(".Country")
