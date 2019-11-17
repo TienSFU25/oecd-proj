@@ -1,14 +1,15 @@
 let geoLayer = {};
 let featureBounds;
-let zoom = 1.1;
-let unknownColorFill = "#ffffff";
+const zoom = 1.1;
+const unknownColorFill = "#ffffff";
+const hoverTransitionTimeMs = 200;
 
 // works on 1130 * 754, again we not trying to make this responsive
 var mapViewport = quads[0]
     .append("svg")
     .attr("viewBox", `${singleViewWidth / 14}, 0, ${singleViewWidth / zoom}, ${singleViewHeight / zoom}`);
 
-var theMap = mapViewport   
+var theMap = mapViewport
     .append("g");
 
 function getFeaturesBox() {
@@ -35,6 +36,29 @@ function fitGeoInside() {
         ].join(' '));
 }
 
+function focusCountries(countries) {
+    d3.selectAll(".Country")
+        .transition()
+        .duration(hoverTransitionTimeMs)
+        .style("opacity", .5)
+        // .style("stroke", "none");
+
+    countries
+        .select("path")
+        .transition()
+        .duration(hoverTransitionTimeMs)
+        .style("opacity", 1)
+        .style("stroke", "black");
+}
+
+function focusNothing() {
+    d3.selectAll(".Country")
+        .transition()
+        .duration(hoverTransitionTimeMs)
+        .style("opacity", .8)
+        // .style("stroke", "none");
+}
+
 function drawWorldView(geography, worldTopology) {
     let dataBySkills = d3.nest().key(function(d) { return `${d.Type}/${d.Skills}`;}).entries(worldTopology);
 
@@ -54,6 +78,8 @@ function drawWorldView(geography, worldTopology) {
     var colorScale = d3.scaleQuantize()
         .domain([-1, 1])
         .range(d3.schemePuOr[8]);
+    
+    var effectiveThresholds = [-1].concat(colorScale.thresholds().concat([1]));
 
     var mylegend = legend({
         color: colorScale,
@@ -62,10 +88,10 @@ function drawWorldView(geography, worldTopology) {
         width: singleViewWidth / 2.5
     });
 
-    quads[0].append("g")
+    var legendGroup = quads[0].append("g")
         .attr("transform", `translate(${singleViewWidth / 1.8}, ${singleViewHeight / 30})`)
         .append(() => mylegend);
- 
+    
     var entriesForSkill = dataBySkills[0];
     var skillName = entriesForSkill.key;
 
@@ -74,7 +100,6 @@ function drawWorldView(geography, worldTopology) {
     textbox.append("text")
         .attr("x", singleViewWidth / 20)
         .attr("y", singleViewHeight / 9)
-        // .attr("dy", ".35em")
         .text(skillName);
 
     // fill up map data (value that will show on choropleth)
@@ -117,41 +142,23 @@ function drawWorldView(geography, worldTopology) {
 
             return colorScale(d.total);
         })
-        .style("stroke", "transparent")
+        .style("stroke", "black")
+        .style("stroke-width", 0.1)
         .attr("class", "Country")
         .style("opacity", .8);
 
     mapGroup.on("mouseover", function(data) {
-        d3.selectAll(".Country")
-            .transition()
-            .duration(200)
-            .style("opacity", .5)
-            .style("stroke", "none");
-        d3.select(this)
-            .select("path")
-            .transition()
-            .duration(200)
-            .style("opacity", 1)
-            .style("stroke", "black");
+        focusCountries(d3.select(this));
 
         // div way
         tooltip.transition()		
-            .duration(200)		
+            .duration(hoverTransitionTimeMs)		
             .style("opacity", .9);
 
         updateTooltip(data);
     })
-    .on("mouseleave", function(data) {
-        d3.selectAll(".Country")
-            .transition()
-            .duration(200)
-            .style("opacity", .8);
-
-        d3.select(this)
-            .select("path")
-            .transition()
-            .duration(200)
-            .style("stroke", "transparent");
+    .on("mouseleave", function() {
+        focusNothing();
 
         tooltip.transition()		
             .duration(500)		
@@ -159,4 +166,22 @@ function drawWorldView(geography, worldTopology) {
     });
 
     fitGeoInside();
+
+    // handlers for hovering over the legend
+    var legendBoxes = legendGroup.selectAll('rect');
+    legendBoxes.on("mouseover", function(d, i) {
+        // console.log(d, i);
+        var from = effectiveThresholds[i];
+        var to = effectiveThresholds[i + 1];
+
+        var countriesInQuantile = mapGroup.filter((val) => {
+            var fits = from < val.total && val.total <= to;
+            return fits;
+        });
+
+        focusCountries(countriesInQuantile);
+        // console.log(countriesInQuantile._groups[0].length);
+    }).on("mouseleave", function() {
+        focusNothing();
+    });
 }
