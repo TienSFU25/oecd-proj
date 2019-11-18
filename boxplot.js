@@ -1,10 +1,27 @@
-const keyFn = (d) => `${d.Type}/${d.Skills}`;
+// our own data
+const keyInvFn = (d) => {
+    const temp = d.split('/');
+    return {
+        Category: temp[0],
+        SkillName: temp[1]
+    };
+};
+const combineFn = (Category, SkillName) => `${Category}/${SkillName}`;
+
+// from raw
+const getSkillNameFn = (d) => d.Skills;
+const getCategoryNameFn = (d) => d.Type;
 
 let boxplot;
 
 function drawBoxPlot(data) {
+    // only show current category
+    data = data.filter((v) => {
+        return v.Type == currentSelectedCategory;
+    });
+
     const boxScale = 0.9;
-    const boxPlotWidth = 25 * singleViewWidth;
+    const boxPlotWidth = 10 * singleViewWidth;
 
     const boxplotHeight = singleViewHeight * 0.7;
 
@@ -15,7 +32,7 @@ function drawBoxPlot(data) {
 
     // Compute quartiles, median, inter quantile range min and max --> these info are then used to draw the box.
     var sumstat = d3.nest() // nest function allows to group the calculation per level of a factor
-        .key(keyFn)
+        .key(getSkillNameFn)
         .rollup(function(d) {
             q1 = d3.quantile(d.map(function(g) { return g.Value;}).sort(d3.ascending),.25);
             median = d3.quantile(d.map(function(g) { return g.Value;}).sort(d3.ascending),.5);
@@ -28,7 +45,7 @@ function drawBoxPlot(data) {
         })
         .entries(data);
 
-    let domain = d3.nest().key(keyFn).entries(data).map(v => v.key);
+    let domain = d3.nest().key(getSkillNameFn).entries(data).map(v => v.key);
 
     // Show the X scale
     var x = d3.scaleBand()
@@ -107,7 +124,7 @@ function drawBoxPlot(data) {
         .data(data)
         .enter()
         .append("circle")
-        .attr("cx", function(d){return(x(keyFn(d)) - jitterWidth/2 + Math.random()*jitterWidth )})
+        .attr("cx", function(d){return(x(getSkillNameFn(d)) - jitterWidth/2 + Math.random()*jitterWidth )})
         .attr("cy", function(d){return(y(d.Value))})
         .attr("r", 4)
         .attr("stroke", "black")
@@ -118,7 +135,7 @@ function drawBoxPlot(data) {
             fadeTooltip();
         })
         .on("click", function(data) {
-            displayMapBySkillName(keyFn(data));
+            displayMapBySkillName(getCategoryNameFn(data), getSkillNameFn(data));
         });
     
     fillCircles();
@@ -131,7 +148,7 @@ function fillCircles() {
     if (boxplot) {
         boxplot.selectAll("circle")
             .style("fill", function(data) {
-            if (keyFn(data) == currentSelectedSkill) {
+            if (getSkillNameFn(data) == currentSelectedSkill) {
                 return "green";
             }
 

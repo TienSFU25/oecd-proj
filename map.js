@@ -12,6 +12,7 @@ let mapPaths;
 let mapData;
 let textbox;
 
+let currentSelectedCategory = "";
 let currentSelectedSkill = "";
 
 const projection = d3.geoNaturalEarth1();
@@ -157,12 +158,16 @@ function drawWorldView(geography, worldTopology) {
     });
 
     // display default skill
-    displayMapBySkillName(dataBySkills[0].key);
+    let { Category, SkillName } = keyInvFn(dataBySkills[0].key);
+    displayMapBySkillName(Category, SkillName);
 }
 
-function displayMapBySkillName(skillName) {
+function displayMapBySkillName(category, skillName) {
     currentSelectedSkill = skillName;
-    let entriesForSkill = dataBySkills.filter((v) => v.key == skillName)[0];
+    currentSelectedCategory = category;
+    let flatKey = combineFn(category, skillName);
+
+    let entriesForSkill = dataBySkills.filter((v) => v.key == flatKey)[0];
     textbox.text(skillName);
 
     // fill up map data (value that will show on choropleth)
