@@ -1,5 +1,7 @@
 const keyFn = (d) => `${d.Type}/${d.Skills}`;
 
+let boxplot;
+
 function drawBoxPlot(data) {
     const boxScale = 0.9;
     const boxPlotWidth = 25 * singleViewWidth;
@@ -35,7 +37,7 @@ function drawBoxPlot(data) {
         .paddingInner(1)
         .paddingOuter(.5);
 
-    var boxplot = quads[2].append("g")
+    boxplot = quads[2].append("g")
         .attr("transform", `scale(${boxScale}) translate(${boxLeftShift}, ${boxDownShift})`);
 
     var xAxis = boxplot.append("g")
@@ -108,15 +110,32 @@ function drawBoxPlot(data) {
         .attr("cx", function(d){return(x(keyFn(d)) - jitterWidth/2 + Math.random()*jitterWidth )})
         .attr("cy", function(d){return(y(d.Value))})
         .attr("r", 4)
-        .style("fill", "white")
         .attr("stroke", "black")
         .on("mouseover", function(data) {
             showTooltip(data.Country, `Value: ${data.Value}`);
         })
         .on("mouseleave", function() {
             fadeTooltip();
+        })
+        .on("click", function(data) {
+            displayMapBySkillName(keyFn(data));
         });
-        
+    
+    fillCircles();
+
     // need to put this at the end or the svg overscales
     quads[2].attr("width", boxPlotWidth * boxScale + 50);
+}
+
+function fillCircles() {
+    if (boxplot) {
+        boxplot.selectAll("circle")
+            .style("fill", function(data) {
+            if (keyFn(data) == currentSelectedSkill) {
+                return "green";
+            }
+
+            return "white";
+        });
+    }
 }

@@ -11,6 +11,8 @@ let mapPaths;
 let mapData;
 let textbox;
 
+let currentSelectedSkill = "";
+
 const projection = d3.geoNaturalEarth1();
 const colorScale = d3.scaleQuantize()
     .domain([-1, 1])
@@ -156,6 +158,7 @@ function drawWorldView(geography, worldTopology) {
 }
 
 function displayMapBySkillName(skillName) {
+    currentSelectedSkill = skillName;
     let entriesForSkill = dataBySkills.filter((v) => v.key == skillName)[0];
     textbox.text(skillName);
 
@@ -165,8 +168,7 @@ function displayMapBySkillName(skillName) {
     });
 
     mapPaths
-    // set the color of each country
-    .attr("fill", function (d) {
+        .attr("fill", function (d) {
         d.total = mapData.get(d.id);
 
         if (d.total) {
@@ -175,4 +177,6 @@ function displayMapBySkillName(skillName) {
             return unknownColorFill;
         }
     });
+
+    fillCircles();
 }
