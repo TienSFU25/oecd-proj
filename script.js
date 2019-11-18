@@ -1,20 +1,3 @@
-const noop = (e) => {d3.event.stopPropagation()};
-const geographyDataLoc = "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson";
-const worldTopologyDataLoc = "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world_population.csv";
-const irisDataLoc = "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/iris.csv";
-const skillsDataLoc = "https://raw.githubusercontent.com/cusoh/data_skills/master/SKILLS_2018_TOTAL_25102019044734209.csv";
-
-const margin = {top: 30, right: 0, bottom: 0, left: 10},
-    width = window.innerWidth - margin.left - margin.right,
-    height = window.innerHeight - margin.top - margin.bottom;
-
-const actualWidth = width - margin.left - margin.right;
-const actualHeight = height - margin.top - margin.bottom;
-const widthOffset = 15;
-
-let singleViewWidth = actualWidth / 2 - widthOffset;
-let singleViewHeight = actualHeight / 2 - widthOffset;
-
 var container = d3.select("#container");
 
 // just use a default projection
@@ -32,7 +15,6 @@ Promise.all(dataPromises).then(values => {
     drawBoxPlot(values[3]);
 }).catch(error => console.error(`Error in data fetching ${error}`));
 
-let quads = [];
 // make our layout
 for (let i = 0; i < 2; i++) {
     let row = container.append("div")

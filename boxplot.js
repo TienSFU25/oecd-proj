@@ -1,13 +1,3 @@
-// our own data
-const keyInvFn = (d) => {
-    const temp = d.split('/');
-    return {
-        Category: temp[0],
-        SkillName: temp[1]
-    };
-};
-const combineFn = (Category, SkillName) => `${Category}/${SkillName}`;
-
 // from raw
 const getSkillNameFn = (d) => d.Skills;
 const getCategoryNameFn = (d) => d.Type;

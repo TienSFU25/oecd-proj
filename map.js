@@ -1,8 +1,3 @@
-const unknownCountryCode = -10;
-const zoom = 1.1;
-const unknownColorFill = "#ffffff";
-const hoverTransitionTimeMs = 200;
-
 let geoLayer = {};
 let featureBounds;
 let dataBySkills;
@@ -11,9 +6,6 @@ let mapGroup;
 let mapPaths;
 let mapData;
 let textbox;
-
-let currentSelectedCategory = "";
-let currentSelectedSkill = "";
 
 const projection = d3.geoNaturalEarth1();
 const colorScale = d3.scaleQuantize()
