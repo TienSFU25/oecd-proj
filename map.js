@@ -1,3 +1,4 @@
+const unknownCountryCode = -10;
 const zoom = 1.1;
 const unknownColorFill = "#ffffff";
 const hoverTransitionTimeMs = 200;
@@ -61,7 +62,7 @@ function focusCountries(countries) {
     d3.selectAll(".Country")
         .transition()
         .duration(hoverTransitionTimeMs)
-        .style("opacity", .5)
+        .style("opacity", .2)
         // .style("stroke", "none");
 
     countries
@@ -89,7 +90,7 @@ function drawWorldView(geography, worldTopology) {
     });
 
     mapData = d3.map();
-    geography.features.map(v => mapData.set(v.id, null));
+    geography.features.map(v => mapData.set(v.id, unknownCountryCode));
 
     // setup the legend
     var mylegend = legend({
@@ -148,6 +149,8 @@ function drawWorldView(geography, worldTopology) {
             return fits;
         });
 
+        // console.log(`focusing ${countriesInQuantile._groups[0].length} countries`);
+
         focusCountries(countriesInQuantile);
     }).on("mouseleave", function() {
         focusNothing();
@@ -171,10 +174,10 @@ function displayMapBySkillName(skillName) {
         .attr("fill", function (d) {
         d.total = mapData.get(d.id);
 
-        if (d.total) {
-            return colorScale(d.total);
-        } else {
+        if (d.total == unknownCountryCode) {
             return unknownColorFill;
+        } else {
+            return colorScale(d.total);
         }
     });
 
