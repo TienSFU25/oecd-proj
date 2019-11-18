@@ -149,20 +149,11 @@ function drawWorldView(geography, worldTopology) {
 
     mapGroup.on("mouseover", function(data) {
         focusCountries(d3.select(this));
-
-        // div way
-        tooltip.transition()		
-            .duration(hoverTransitionTimeMs)		
-            .style("opacity", .9);
-
-        updateTooltip(data);
+        showTooltip(data.properties.name, `Value: ${data.total}`);
     })
     .on("mouseleave", function() {
         focusNothing();
-
-        tooltip.transition()		
-            .duration(500)		
-            .style("opacity", 0);
+        fadeTooltip();
     });
 
     fitGeoInside();

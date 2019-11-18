@@ -1,3 +1,4 @@
+const keyFn = (d) => `${d.Type}/${d.Skills}`;
 
 function drawBoxPlot(data) {
     const boxScale = 0.9;
@@ -12,7 +13,7 @@ function drawBoxPlot(data) {
 
     // Compute quartiles, median, inter quantile range min and max --> these info are then used to draw the box.
     var sumstat = d3.nest() // nest function allows to group the calculation per level of a factor
-        .key(function(d) { return `${d.Type}/${d.Skills}`;})
+        .key(keyFn)
         .rollup(function(d) {
             q1 = d3.quantile(d.map(function(g) { return g.Value;}).sort(d3.ascending),.25);
             median = d3.quantile(d.map(function(g) { return g.Value;}).sort(d3.ascending),.5);
@@ -25,7 +26,7 @@ function drawBoxPlot(data) {
         })
         .entries(data);
 
-    let domain = d3.nest().key(function(d) { return `${d.Type}/${d.Skills}`;}).entries(data).map(v => v.key);
+    let domain = d3.nest().key(keyFn).entries(data).map(v => v.key);
 
     // Show the X scale
     var x = d3.scaleBand()
@@ -96,6 +97,26 @@ function drawBoxPlot(data) {
         .attr("stroke", "black")
         .style("width", 80);
     
+    // Add individual points with jitter
+    var jitterWidth = boxWidth * 2;
+    
+    boxplot
+        .selectAll("indPoints")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("cx", function(d){return(x(keyFn(d)) - jitterWidth/2 + Math.random()*jitterWidth )})
+        .attr("cy", function(d){return(y(d.Value))})
+        .attr("r", 4)
+        .style("fill", "white")
+        .attr("stroke", "black")
+        .on("mouseover", function(data) {
+            showTooltip(data.Country, `Value: ${data.Value}`);
+        })
+        .on("mouseleave", function() {
+            fadeTooltip();
+        });
+        
     // need to put this at the end or the svg overscales
     quads[2].attr("width", boxPlotWidth * boxScale + 50);
 }
