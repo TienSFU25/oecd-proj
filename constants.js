@@ -33,3 +33,8 @@ const keyInvFn = (d) => {
     };
 };
 const combineFn = (Category, SkillName) => `${Category}/${SkillName}`;
+
+const filterColorScale = d3.schemeSet2;
+const tabNames = ["Skills", "Abilities", "Knowledge", "Workstyles"];
+const tabWidth = singleViewWidth / tabNames.length;
+const tabHeight = singleViewHeight * 0.1;

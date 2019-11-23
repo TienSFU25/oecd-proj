@@ -39,3 +39,15 @@ for (let i = 0; i < 2; i++) {
         quads.push(quad);
     }
 }
+
+let tabs = container.append("div")
+    .attr("class", "flex-container")
+    .attr("style", `width: ${tabWidth * tabNames.length}px`);
+
+for (let i = 0; i < tabNames.length; i++) {
+    tabs.append("div")
+        .attr("class", "flex-item")
+        .attr("style", `height: ${tabHeight}px; background: ${filterColorScale[i]}`)
+        .append("div")
+        .text(tabNames[i]);    
+}
