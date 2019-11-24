@@ -22,17 +22,20 @@ const zoom = 1.1;
 const unknownColorFill = "#ffffff";
 const hoverTransitionTimeMs = 200;
 
-// from individual to composite key (and back)
-const keyInvFn = (d) => {
-    const temp = d.split('/');
-    return {
-        Category: temp[0],
-        SkillName: temp[1]
-    };
-};
-const combineFn = (Category, SkillName) => `${Category}/${SkillName}`;
-
 const filterColorScale = d3.schemeSet2;
 const tabNames = ["Skills", "Abilities", "Knowledge", "Workstyles"];
 const tabWidth = singleViewWidth / tabNames.length;
 const tabHeight = singleViewHeight * 0.1;
+
+// boxplot constants
+const singleItemWidth = 100;
+const boxScale = 0.9;
+const boxplotHeight = singleViewHeight * 0.7;
+
+// pretty random constants...not exactly responsive
+// we will need to tweak this to fit the screen
+const boxLeftShift = singleViewWidth * (1 - boxScale) / 2;
+const boxDownShift = boxplotHeight * (1 - boxScale) / 3;
+
+const boxWidth = 10;
+const jitterWidth = boxWidth * 2;

@@ -8,3 +8,4 @@ let currentSelectedSkill = "";
 // data variables
 let geographyData;
 let skillsData;
+let dataBySkills;

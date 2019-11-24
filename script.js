@@ -17,6 +17,8 @@ Promise.all(dataPromises).then(values => {
         return v.id !== "ATA";
     });
 
+    dataBySkills = d3.nest().key(d => d.Type).key(d => d.Skills).entries(skillsData);
+
     drawWorldView();
     drawBoxPlot();
 }).catch(error => console.error(`Error in data fetching ${error}`));
@@ -55,5 +57,13 @@ for (let i = 0; i < tabNames.length; i++) {
         .attr("class", "flex-item")
         .attr("style", `height: ${tabHeight}px; background: ${filterColorScale[i]}`)
         .append("div")
-        .text(tabNames[i]);    
+        .text(tabNames[i])
+        .on("click", function() {
+            currentSelectedCategory = tabNames[i];
+            currentSelectedSkill = dataBySkills.filter((v) => v.key == currentSelectedCategory)[0].values[0].key;
+            
+            // drawBoxPlot();
+            updateBoxPlot();
+            updateMap();
+        });
 }

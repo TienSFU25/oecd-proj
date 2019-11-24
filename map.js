@@ -1,6 +1,5 @@
 let geoLayer = {};
 let featureBounds;
-let dataBySkills;
 
 let mapGroup;
 let mapPaths;
@@ -75,8 +74,6 @@ function focusNothing() {
 }
 
 function drawWorldView() {
-    dataBySkills = d3.nest().key(function(d) { return `${d.Type}/${d.Skills}`;}).entries(skillsData);
-
     mapData = d3.map();
     geographyData.features.map(v => mapData.set(v.id, unknownCountryCode));
 
@@ -145,17 +142,15 @@ function drawWorldView() {
     });
 
     // display default skill
-    let { Category, SkillName } = keyInvFn(dataBySkills[0].key);
-    displayMapBySkillName(Category, SkillName);
+    currentSelectedCategory = dataBySkills[0].key;
+    currentSelectedSkill = dataBySkills[0].values[0].key;
+    updateMap();
 }
 
-function displayMapBySkillName(category, skillName) {
-    currentSelectedSkill = skillName;
-    currentSelectedCategory = category;
-    let flatKey = combineFn(category, skillName);
-
-    let entriesForSkill = dataBySkills.filter((v) => v.key == flatKey)[0];
-    textbox.text(skillName);
+function updateMap() {
+    let entriesForCategory = dataBySkills.filter((v) => v.key == currentSelectedCategory)[0];
+    let entriesForSkill = entriesForCategory.values.filter((v) => v.key == currentSelectedSkill)[0];
+    textbox.text(currentSelectedSkill);
 
     // fill up map data (value that will show on choropleth)
     entriesForSkill.values.map((entry) => {
