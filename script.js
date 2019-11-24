@@ -41,7 +41,7 @@ for (let i = 0; i < 2; i++) {
 
         quad.append("rect")
             .attr("opacity", opacity)
-            .attr("width", singleViewWidth)
+            .attr("width", maxWidth)
             .attr("height", singleViewHeight);
 
         quads.push(quad);

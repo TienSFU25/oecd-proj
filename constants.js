@@ -16,6 +16,8 @@ const widthOffset = 15;
 const singleViewWidth = actualWidth / 2 - widthOffset;
 const singleViewHeight = actualHeight / 2 - widthOffset;
 
+const maxWidth = 10000;
+
 // map constants
 const unknownCountryCode = -10;
 const zoom = 1.1;
@@ -23,7 +25,7 @@ const unknownColorFill = "#ffffff";
 const hoverTransitionTimeMs = 200;
 
 const filterColorScale = d3.schemeSet2;
-const tabNames = ["Skills", "Abilities", "Knowledge", "Workstyles"];
+const tabNames = ["Abilities", "Skills", "Knowledge", "Workstyles"];
 const tabWidth = singleViewWidth / tabNames.length;
 const tabHeight = singleViewHeight * 0.1;
 
