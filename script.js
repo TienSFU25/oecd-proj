@@ -23,16 +23,27 @@ Promise.all(dataPromises).then(values => {
     drawBoxPlot();
 }).catch(error => console.error(`Error in data fetching ${error}`));
 
+// add horizontal scroll
+function scrollHorizontally(e) {
+    e = window.event || e;
+    var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+    this.scrollLeft -= (delta*40);
+    e.preventDefault();
+}
+
 // make our layout
 for (let i = 0; i < 2; i++) {
     let row = container.append("div")
         .attr("class", "row");
 
     for (let j = 0; j < 2; j++) {
-        let quad = row.append("div")
+        let quadContainer = row.append("div")
             .attr("class", "scroll column")
-            .attr("style", `width: ${singleViewWidth+widthOffset}`)
-            .append("svg")
+            .attr("style", `width: ${singleViewWidth+widthOffset}`);
+        
+        quadContainer.on("mousewheel", scrollHorizontally.bind(quadContainer.node()), false);
+        
+        let quad = quadContainer.append("svg")
             .attr("width", singleViewWidth)
             .attr("height", singleViewHeight);
 
