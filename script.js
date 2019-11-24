@@ -5,14 +5,20 @@ var container = d3.select("#container");
 
 const dataPromises = [
     d3.json(geographyDataLoc),
-    d3.csv(worldTopologyDataLoc),
-    d3.csv(irisDataLoc),
     d3.csv(skillsDataLoc)
 ];
 
 Promise.all(dataPromises).then(values => {
-    drawWorldView(values[0], values[3]);
-    drawBoxPlot(values[3]);
+    geographyData = values[0];
+    skillsData = values[1];
+
+    // ignore Antartica
+    geographyData.features = geographyData.features.filter((v) => {
+        return v.id !== "ATA";
+    });
+
+    drawWorldView();
+    drawBoxPlot();
 }).catch(error => console.error(`Error in data fetching ${error}`));
 
 // make our layout

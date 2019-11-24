@@ -74,16 +74,11 @@ function focusNothing() {
         // .style("stroke", "none");
 }
 
-function drawWorldView(geography, worldTopology) {
-    dataBySkills = d3.nest().key(function(d) { return `${d.Type}/${d.Skills}`;}).entries(worldTopology);
-
-    // ignore Antartica
-    geography.features = geography.features.filter((v) => {
-        return v.id !== "ATA";
-    });
+function drawWorldView() {
+    dataBySkills = d3.nest().key(function(d) { return `${d.Type}/${d.Skills}`;}).entries(skillsData);
 
     mapData = d3.map();
-    geography.features.map(v => mapData.set(v.id, unknownCountryCode));
+    geographyData.features.map(v => mapData.set(v.id, unknownCountryCode));
 
     // setup the legend
     var mylegend = legend({
@@ -107,7 +102,7 @@ function drawWorldView(geography, worldTopology) {
     // Draw the map
     mapGroup = theMap
         .selectAll("path")
-        .data(geography.features)
+        .data(geographyData.features)
         .enter()
         .append("g");
 
@@ -118,7 +113,7 @@ function drawWorldView(geography, worldTopology) {
         .style("stroke-width", 0.1)
         .attr("class", "Country")
         .style("opacity", .8);
-    fitGeoInside(path, geography.features);
+    fitGeoInside(path, geographyData.features);
 
     // map hover handlers
     mapGroup.on("mouseover", function(data) {

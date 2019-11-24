@@ -5,3 +5,6 @@ let quads = [];
 let currentSelectedCategory = "";
 let currentSelectedSkill = "";
 
+// data variables
+let geographyData;
+let skillsData;

@@ -4,7 +4,9 @@ const getCategoryNameFn = (d) => d.Type;
 
 let boxplot;
 
-function drawBoxPlot(data) {
+function drawBoxPlot() {
+    let data = skillsData;
+
     // only show current category
     data = data.filter((v) => {
         return v.Type == currentSelectedCategory;
