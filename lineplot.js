@@ -10,8 +10,10 @@ window.onload = function(){
     //loadMapData("world-110m2.json");
     //loadSkillData('SKILLS_2018_TOTAL_25102019044734209.csv');
     //loadSkillData(skillsDataLoc);
-    loadSkillData('parsed_skills_data.json');
-    loadCorrelationData('parsed_corr_data.json');
+    //loadSkillData('parsed_skills_data.json');
+    loadSkillData('https://raw.githubusercontent.com/TienSFU25/oecd-proj/master/parsed_skills_data.json');
+    //loadCorrelationData('parsed_corr_data.json');
+    loadCorrelationData('https://raw.githubusercontent.com/TienSFU25/oecd-proj/master/parsed_corr_data.json');
     createDropDown("#dropdown");
 };
 
