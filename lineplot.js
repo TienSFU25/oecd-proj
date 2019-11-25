@@ -1,38 +1,36 @@
 
 var countries  = ['Austria', 'Austrailia','Belgium', 'Czech Republic','Canada', 'France', 'Denmark', 'Finland', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Ireland', 'Italy', 'Luxembourg', 'Mexico', 'Netherlands', 'New Zealand', 'Norway', 'Poland', 'Portugal', 'Slovak Republic', 'Spain', 'Sweden', 'Switzerland', 'Turkey', 'United Kingdom', 'United States', 'Argentina', 'Brazil', 'Bulgaria', 'Chile', 'Cyprus', 'Estonia', 'Latvia', 'Lithuania', 'Peru', 'Romania', 'Slovenia', 'South Africa', 'Malaysia'];
 var _cdata;
-var cdata ={};
+var corrData;
+var cdata =[];
+var countrySel;
 window.onload = function(){
 
     //console.log("Create a global variable named \"_data\"");
     //loadMapData("world-110m2.json");
     //loadSkillData('SKILLS_2018_TOTAL_25102019044734209.csv');
-    loadSkillData(skillsDataLoc);
+    //loadSkillData(skillsDataLoc);
+    loadSkillData('parsed_skills_data.json');
+    loadCorrelationData('parsed_corr_data.json');
     createDropDown("#dropdown");
 };
 
-function loadSkillData(path){
-    d3.csv(path).then(
-        function(data){
-            _cdata  = data;
-
-            console.log("skills data loaded");
-
-            for(let row in _cdata){
-               let c = _cdata[row]['Country'];
-
-               let sk = _cdata[row]['Skills']
-               let value = _cdata[row]['Value']
-
-               if(!(c in cdata)){
-                   cdata[c]=[{ key: sk, value : value}]
-               }else{
-                   cdata[c].push({ key: sk, value : value})
-               }
-
-            }
+function loadCorrelationData(path){
+    d3.json(path).then(
+        function(dat){
+            corrData=dat;
         }
     )
+
+}
+function loadSkillData(path){
+    d3.json(path).then(
+        function(data){
+            cdata = data;
+        }
+    );
+ 
+
 }
 
 function createDropDown(div_id){
@@ -48,37 +46,37 @@ function createDropDown(div_id){
         opt.value = countries[val];
         opt.id="country_select";
         select.options.add(  opt );
-        console.log(countries[val], countries[val]);
+        //console.log(countries[val]);
     }
     document.querySelector(div_id).appendChild(select);
 
     document.getElementById("viz-2-select").addEventListener("change", function (sel){
         let currentC = sel.srcElement.value;
-        console.log(currentC);
+        //console.log(currentC);
+        let curCatData = cdata[currentSelectedCategory];
+        //console.log(curCatData);
+        //console.log(curCatData[currentC]);
         //console.log(cdata[currentC]);
-        updateBarPlot(currentC, cdata[currentC]);
+        countrySel = currentC;
+        updateBarPlot(currentC, curCatData[currentC]);
     })
 }
 
-function updateBarPlot(country, data){
+function updateBarPlot(country, xdata){
+    let newData=[];
 
-    //// get the skills data for the country selected
-    // already read in _cdata;
-
-    //// plot the skill data as a point
-    // set the dimensions and margins of the graph
-    //mywidth = $("#lineplot").width();
-    //myheight = $("#lineplot").height();
-
+    for (dd in xdata){
+        //console.log(dd);
+        newData.push({key:dd, value:xdata[dd]});
+    }
     let mywidth = singleViewWidth    ;
     let myheight = singleViewHeight;
     console.log("XXXXXXXXXXXXXXX");
     console.log(mywidth);
     console.log(myheight);
 
-
     var margin = {top: 0, right: 0, bottom: 200, left: 0},
-        width = 2200 - margin.left - margin.right,
+        width = 1000 - margin.left - margin.right,
         height = myheight - margin.top - margin.bottom;
 
 
@@ -92,10 +90,10 @@ function updateBarPlot(country, data){
         .append("g")
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
+
     // Add x axis
     var x = d3.scaleBand()
-        .domain( data.map( function(d,i) {
-            return d.key; }))
+        .domain(d3.map(xdata).keys())
         .rangeRound([0, width])
         .padding(0.1);
 
@@ -117,37 +115,32 @@ function updateBarPlot(country, data){
     svg.append("g")
         .attr("class", "y axis")
         .attr("transform", "translate(" + width + ",0)")
-        .call(d3.axisLeft(y));
+        .call(d3.axisRight(y));
 
-    // Add the line
-    // svg.append("path")
-    //     .datum(data)
-    //     .attr("fill", "none")
-    //     .attr("stroke", "steelblue")
-    //     .attr("stroke-width", 1.5)
-    //     .attr("d", d3.line()
-    //         .x(function(d,i) { return x(d.key) })
-    //         .y(function(d,i) { return y(d.value) })
-    //     );
+    console.log("DEBUG:");
+    console.log(xdata);
 
     // Add the line
     svg.append("path")
-        .datum(data)
+        .datum(newData)
         .attr("fill", "none")
         .attr("stroke", "gray")
         .attr("stroke-width", 1)
         .attr("d", d3.line()
-            .x(function(d,i) { return x(d.key) })
-            .y(function(d,i) { return y(1) })
+            .x(function(d) {
+                return x(d.key); })
+            .y(function(d) {
+                //console.log(y(1));
+                return y(1); })
         );
 
     // Add the green regions
     svg.append("path")
-        .datum(data)
+        .datum(newData)
         .attr("fill", function(d,i){
             //let v = parseFloat(d.value);
             let v = 0.55;
-            console.log(d);
+            //console.log(d);
             if(v>=0.5){return '#BFB';}else{return '#FBB';}
         })
         .attr("stroke", "none")
@@ -157,10 +150,10 @@ function updateBarPlot(country, data){
             .y0(function(d) { return y(0) })
             .y1(function(d) { if (d.value>0) {return y(d.value)}else{return y(0)} })
         );
-
+    //
     // Add the red regions
     svg.append("path")
-        .datum(data)
+        .datum(newData)
         .attr("fill", function(d,i){
             //let v = parseFloat(d.value);
             let v = 0.55;
@@ -177,7 +170,7 @@ function updateBarPlot(country, data){
 
     svg.append('g')
         .selectAll("dot")
-        .data(data)
+        .data(newData)
         .enter()
         .append("circle")
         .attr("cx", function (d) { return x(d.key); } )
@@ -185,14 +178,14 @@ function updateBarPlot(country, data){
         .attr("r", 2.0)
         .style("fill", "orange");
 
-    svg.selectAll("rect").data(data)
+    svg.selectAll("rect").data(newData)
         .enter()
         .append("rect")
         .attr("x",function(d,i){
             //d is the object
             //i is the index
-            console.log(i);
-            return x(d.key)-(0.5*width/data.length); })
+            //  console.log(i);
+            return x(d.key)-(0.5*width/newData.length); })
         .attr("y", function(d,i){
             let u = y(0); let v = y(d.value);
             if(u>v)
@@ -201,7 +194,7 @@ function updateBarPlot(country, data){
                 return u;
 
         })
-        .attr("width", -2 + width/data.length)
+        .attr("width", -2 + width/newData.length)
         .attr("height", function(d,i){
             let u = y(0); let v = y(d.value);
             if(u>v)
@@ -217,36 +210,27 @@ function updateBarPlot(country, data){
             let thise = d3.select(this);
             thise.transition()
                 .duration('50')
-                .attr('opacity', '.8')
-                .attr("transform", function(){
-                    let center = {
-                        x : thise.attr("x"),
-                        y : thise.attr("y")
-                    };
-                    return `translate(${thise.attr("transform_origin_x")}, ${thise.attr("transform_origin_y")}) 
-                    translate(${-0.2 * center.x}, ${-0.2 * center.y})
-                    scale(1.2, 1.2)`;
-                });
+                .attr('opacity', '.8');
         })
         .on('mouseout', function(d,i){
             //console.log("Bye from ");
             let thise=d3.select(this);
             thise.transition()
                 .duration('50')
-                .attr('opacity', '0.3')
-                .attr("transform", function(){
-                    return `translate(${thise.attr("transform_origin_x")}, ${thise.attr("transform_origin_y")}) scale(1,1)`;
-                });
+                .attr('opacity', '0.3');
+
+        })
+        .on("click", function(d){
+            console.log(d)
+            console.log(currentSelectedCategory)
         });
 
-    // // Add the line
-    // svg.append("path")
-    //     .datum(data)
-    //     .attr("fill", "none")
-    //     .attr("stroke", "black")
-    //     .attr("stroke-width", 1)
-    //     .attr("d", d3.line()
-    //         .x(function(d,i) { return x(d.key) })
-    //         .y(function(d,i) { return y(-1) })
-    //     );
+
+
+    // Call the function for donut plot
+    /* For the selected country the doughnut plot essentially show which other countries have similar/dis-similar
+    * attributes for skill categories */
+    let div_id = quads[3];
+    plotCorrelation(div_id, countrySel);
+
 }
