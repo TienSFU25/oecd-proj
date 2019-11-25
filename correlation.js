@@ -68,7 +68,7 @@ function plotCorrelation(svg, country){
     // // let mywidth = singleViewWidth;
     // // let myheight = singleViewHeight;
     //
-    let width = 600; //singleViewWidth/2;
+    let width = 580; //singleViewWidth/2;
     let height = 400; //singleViewHeight;
     let margin=30;
 

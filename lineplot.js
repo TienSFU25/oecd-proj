@@ -77,10 +77,18 @@ function updateBarPlot(country, xdata){
     console.log(mywidth);
     console.log(myheight);
 
-    var margin = {top: 0, right: 0, bottom: 200, left: 0},
-        width = 1000 - margin.left - margin.right,
-        height = myheight - margin.top - margin.bottom;
 
+    //console.log("HHHHHHHHHHHHH");
+    let numBARS = Object.keys(newData).length;
+    if (numBARS*20 < 550){
+        w = numBARS*20;
+    }
+    else{
+        w = 1000;
+    }
+    var margin = {top: 0, right: 0, bottom: 200, left: 0},
+        width = w - margin.left - margin.right,
+        height = myheight - margin.top - margin.bottom;
 
     // let svg=d3.select("#lineplot");
     //let svg=d3.select("#lineplot");
