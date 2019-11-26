@@ -15,9 +15,11 @@ function drawBoxPlot() {
         .paddingOuter(.5);
 
     boxplot = quads[2].append("g")
+        .attr("class", "boxplot")
         .attr("transform", `scale(${boxScale}) translate(${boxLeftShift}, ${boxDownShift})`);
 
     xAxis = boxplot.append("g")
+        .attr("class", "xaxis")
         .attr("transform", `translate(0, ${boxplotHeight})`)
         .call(d3.axisBottom(x));
 
@@ -33,9 +35,10 @@ function drawBoxPlot() {
 }
 
 function clear() {
-    boxplot.selectAll("line.boxplot").remove();
-    boxplot.selectAll("rect.boxplot").remove();
-    boxplot.selectAll("line.boxplot-median").remove();
+    boxplot.selectAll(".vertline").remove();
+    boxplot.selectAll(".mainbox").remove();
+    boxplot.selectAll(".median").remove();
+    boxplot.selectAll(".hoverbox").remove();
 
     // remove jitter
     boxplot.selectAll("circle").remove();
@@ -74,10 +77,10 @@ function updateBoxPlot() {
         .range([0, boxPlotWidth]);
 
     xAxis.call(d3.axisBottom(x));
-    xAxis.selectAll("text")	
-        .style("text-anchor", "end")
-        .attr("transform", function(d) {
-            return "rotate(-65)" 
+    xAxis.selectAll("text")
+        .on("click", function(data) {
+            currentSelectedSkill = data.key;
+            updateMap();
         });
 
     // Show the main vertical line
@@ -87,7 +90,7 @@ function updateBoxPlot() {
     vertLines.data(sumstat)
         .enter()
         .append("line")
-        .attr("class", "boxplot")
+        .attr("class", "vertline")
         .attr("x1", function(d){return(x(d.key))})
         .attr("x2", function(d){return(x(d.key))})
         .attr("y1", function(d){return(y(d.value.min))})
@@ -101,7 +104,7 @@ function updateBoxPlot() {
         .data(sumstat)
         .enter()
         .append("rect")
-        .attr("class", "boxplot")
+        .attr("class", "mainbox")
         .attr("x", function(d){return(x(d.key)-boxWidth/2)})
         .attr("y", function(d){return(y(d.value.q3))})
         .attr("height", function(d){return(Math.abs(y(d.value.q1)-y(d.value.q3)))})
@@ -115,13 +118,29 @@ function updateBoxPlot() {
         .data(sumstat)
         .enter()
         .append("line")
-        .attr("class", "boxplot-median")
+        .attr("class", "median")
         .attr("x1", function(d){return(x(d.key)-boxWidth/2) })
         .attr("x2", function(d){return(x(d.key)+boxWidth/2) })
         .attr("y1", function(d){return(y(d.value.median))})
         .attr("y2", function(d){return(y(d.value.median))})
         .attr("stroke", "black")
         .style("width", 80);
+
+    // opaque rectangle for hover
+    boxplot
+        .selectAll("hoverBox")
+        .data(sumstat)
+        .enter()
+        .append("rect")
+        .attr("class", "hoverarea")
+        .attr("x", function(d){return(x(d.key)-singleItemWidth/4)})
+        .attr("y", function(d){return(y(1.0))})
+        .attr("height", boxplotHeight)
+        .attr("width", singleItemWidth / 2)
+        .on("click", function(data) {
+            currentSelectedSkill = data.key;
+            updateMap();
+        });
 
     // show jitter
     for (let i = 0; i < data.length; i++) {
@@ -136,6 +155,7 @@ function updateBoxPlot() {
             .attr("cx", function(d){return(x(skillName) - jitterWidth/2 + Math.random()*jitterWidth )})
             .attr("cy", function(d){return(y(d.Value))})
             .attr("r", 4)
+            .attr("class", "hover")
             .attr("stroke", "black")
             .on("mouseover", function(data) {
                 showTooltip(data.Country, `Value: ${data.Value}`);

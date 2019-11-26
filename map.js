@@ -108,7 +108,7 @@ function drawWorldView() {
         .attr("d", path)
         .style("stroke", "black")
         .style("stroke-width", 0.1)
-        .attr("class", "Country")
+        .attr("class", "Country hover")
         .style("opacity", .8);
     fitGeoInside(path, geographyData.features);
 

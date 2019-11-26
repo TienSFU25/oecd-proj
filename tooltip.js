@@ -1,7 +1,9 @@
 // Define the div for the tooltip
 const tooltip = d3.select("body").append("div")	
     .attr("class", "tooltip")				
-    .style("opacity", 0);
+    .style("opacity", 0)
+    .style("left", "0px")		
+    .style("top", "0px");	
 
 const showTooltip = (line1, line2) => {
     tooltip.transition()		
