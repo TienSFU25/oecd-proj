@@ -8,8 +8,8 @@ let textbox;
 
 const projection = d3.geoNaturalEarth1();
 const colorScale = d3.scaleQuantize()
-    .domain([-1, 1])
-    .range(d3.schemePuOr[8]);
+    .domain([-0.75, 0.75])
+    .range(d3.schemePuOr[6]);
 const effectiveThresholds = [-1].concat(colorScale.thresholds().concat([1]));
 
 // works on 1130 * 754, again we not trying to make this responsive

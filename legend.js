@@ -50,7 +50,7 @@ function legend({
 
   // Discrete
   else if (color.invertExtent) {
-    const thresholds
+    let thresholds
         = color.thresholds ? color.thresholds() // scaleQuantize
         : color.quantiles ? color.quantiles() // scaleQuantile
         : color.domain(); // scaleThreshold
@@ -74,9 +74,15 @@ function legend({
         .attr("height", height - marginTop - marginBottom)
         .attr("fill", d => d);
 
-    tickValues = d3.range(thresholds.length);
+    // pretty ad hoc hack for demo
+    let diff = thresholds[1] - thresholds[0]; 
+    thresholds = [thresholds[0] - diff].concat(thresholds);
+    thresholds.push(thresholds[thresholds.length - 1] + diff);
+    tickValues = d3.range(thresholds.length).map(v => v - 1);
+
     tickFormat = i => {
-        const tf = thresholdFormat(thresholds[i], i);
+        let tf = thresholdFormat(thresholds[i + 1], i);
+        tf = Math.round(tf * 100) / 100;
         return tf;
     };
   }
