@@ -25,14 +25,13 @@ function loadCorrelationData(path){
     )
 
 }
-function loadSkillData(path){
+
+function loadSkillData(path) {
     d3.json(path).then(
-        function(data){
+        function (data) {
             cdata = data;
         }
     );
- 
-
 }
 
 function createDropDown(div_id){
@@ -80,21 +79,22 @@ function updateBarPlot(country, xdata){
 
     //console.log("HHHHHHHHHHHHH");
     let numBARS = Object.keys(newData).length;
-    if (numBARS*20 < 550){
-        w = numBARS*20;
+    if (numBARS*24 < 550){
+        w = numBARS*24;
     }
     else{
         w = 1000;
     }
-    var margin = {top: 0, right: 0, bottom: 200, left: 0},
+    var margin = {top: 0, right: 0, bottom: 200, left: 50},
         width = w - margin.left - margin.right,
-        height = myheight - margin.top - margin.bottom;
+        height = myheight + margin.top - margin.bottom;
 
     // let svg=d3.select("#lineplot");
     //let svg=d3.select("#lineplot");
     let svg = quads[1];
 
     svg.selectAll("*").remove();
+
     svg.attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
@@ -104,7 +104,7 @@ function updateBarPlot(country, xdata){
     // Add x axis
     var x = d3.scaleBand()
         .domain(d3.map(xdata).keys())
-        .rangeRound([0, width])
+        .rangeRound([margin.left, width])
         .padding(0.1);
 
     svg.append("g")
@@ -117,18 +117,56 @@ function updateBarPlot(country, xdata){
         .attr("transform", "rotate(90)")
         .style("text-anchor", "start");
 
+    function getMax(data) {
+        let max = -1;
+        //let keys = Object.keys(data);
+        for (k in data){
+            console.log('k');
+            console.log(k);
+            console.log('val');
+            console.log(data[k].value);
+            if(data[k].value > max){
+                max = data[k].value;
+            }
+        }
+        return max;
+    }
+
+    function getMin(data) {
+        let min = 1;
+        //keys = Object.keys(data);
+        for (k in data){
+            console.log('k');
+            console.log(k);
+            console.log('val');
+            console.log(data[k].value);
+            if(data[k].value < min){
+                min = data[k].value;
+            }
+        }
+        return min;
+    }
+
+    let Lmin = getMin(newData)-0.1;
+    let Lmax = getMax(newData)+0.1;
+
+
+    console.log(newData);
+    console.log("VVVVVVVV");
+    console.log(Lmin);
+    console.log(Lmax);
     // Add Y axis
     var y = d3.scaleLinear()
-        .domain([-1, 1])
+        .domain([Lmin, Lmax])
         .range([height, 10]);
 
     svg.append("g")
         .attr("class", "y axis")
-        .attr("transform", "translate(" + width + ",0)")
-        .call(d3.axisRight(y));
+        .attr("transform", "translate(" + margin.left + ",0)")
+        .call(d3.axisLeft(y));
 
-    console.log("DEBUG:");
-    console.log(xdata);
+    //console.log("DEBUG:");
+    //console.log(xdata);
 
     // Add the line
     svg.append("path")
