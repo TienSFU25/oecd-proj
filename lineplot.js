@@ -93,6 +93,13 @@ function updateBarPlot(country, xdata){
     //let svg=d3.select("#lineplot");
     let svg = quads[1];
 
+    var tooltip = d3.select("body")
+        .append("div")
+        .style("position", "absolute")
+        .style("z-index", "10")
+        .style("visibility", "hidden")
+        .text("a simple tooltip");
+
     svg.selectAll("*").remove();
 
     svg.attr("width", width + margin.left + margin.right)
@@ -104,14 +111,14 @@ function updateBarPlot(country, xdata){
     // Add x axis
     var x = d3.scaleBand()
         .domain(d3.map(xdata).keys())
-        .rangeRound([margin.left+12, width])
+        .rangeRound([margin.left, width])
         .padding(0.1);
 
     svg.append("g")
         .attr("transform", "translate(0," + height + ")")
         .call(d3.axisBottom(x))
         .selectAll("text")
-        .attr("y", 0)
+        .attr("y", 8)
         .attr("x", 10)
         .attr("dy", ".5em")
         .attr("transform", "rotate(90)")
@@ -255,10 +262,17 @@ function updateBarPlot(country, xdata){
         .on("mouseover", function(d,i){
             //console.log("Mouse over");
             //console.log(d['Country']);
+            //console.log(d);
             let thise = d3.select(this);
             thise.transition()
                 .duration('50')
                 .attr('opacity', '.8');
+
+            return tooltip.style("visibility", "visible").text(d.key);
+        })
+        .on('mousemove', function(){
+            return tooltip.style("top",
+                (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");
         })
         .on('mouseout', function(d,i){
             //console.log("Bye from ");
@@ -266,7 +280,7 @@ function updateBarPlot(country, xdata){
             thise.transition()
                 .duration('50')
                 .attr('opacity', '0.3');
-
+            return tooltip.style("visibility", "hidden");
         })
         .on("click", function(d){
             console.log(d)

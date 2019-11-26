@@ -256,6 +256,7 @@ function plotCorrelation(svg, country){
         .text("a simple tooltip");
 
 
+
     // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
     var arcs1 = g.selectAll('whatever')
         .data(data_ready)
@@ -383,6 +384,23 @@ function plotCorrelation(svg, country){
         .attr("y", height*0.2 + 200)
         .attr("dy", ".35em")
         .text("Workstyles");
+
+
+
+    svg.append("text")
+        .attr("x", width/4-70)
+        .attr("y", height*0.9 )
+        .attr("dy", ".35em")
+        .text("Positively Correlated");
+
+    svg.append("text")
+        .attr("x", 3*width/4-70)
+        .attr("y", height*0.9 )
+        .attr("dy", ".35em")
+        .text("Negatively Correlated");
+
+
+
     // const annotations = [
     //     {
     //         note: {
