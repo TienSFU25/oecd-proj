@@ -80,10 +80,10 @@ function updateBarPlot(country, xdata){
     //console.log("HHHHHHHHHHHHH");
     let numBARS = Object.keys(newData).length;
     if (numBARS*24 < 550){
-        w = numBARS*24;
+        w = numBARS*24+12;
     }
     else{
-        w = 1000;
+        w = 1200;
     }
     var margin = {top: 0, right: 0, bottom: 200, left: 50},
         width = w - margin.left - margin.right,
@@ -104,7 +104,7 @@ function updateBarPlot(country, xdata){
     // Add x axis
     var x = d3.scaleBand()
         .domain(d3.map(xdata).keys())
-        .rangeRound([margin.left, width])
+        .rangeRound([margin.left+12, width])
         .padding(0.1);
 
     svg.append("g")
@@ -147,8 +147,8 @@ function updateBarPlot(country, xdata){
         return min;
     }
 
-    let Lmin = getMin(newData)-0.1;
-    let Lmax = getMax(newData)+0.1;
+    let Lmin = getMin(newData)*1.1;
+    let Lmax = getMax(newData)*1.1;
 
 
     console.log(newData);
@@ -242,7 +242,7 @@ function updateBarPlot(country, xdata){
                 return u;
 
         })
-        .attr("width", -2 + width/newData.length)
+        .attr("width", width/newData.length)
         .attr("height", function(d,i){
             let u = y(0); let v = y(d.value);
             if(u>v)
@@ -282,3 +282,4 @@ function updateBarPlot(country, xdata){
     plotCorrelation(div_id, countrySel);
 
 }
+
