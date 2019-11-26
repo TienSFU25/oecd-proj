@@ -118,7 +118,7 @@ function updateBarPlot(country, xdata){
         .style("text-anchor", "start");
 
     function getMax(data) {
-        let max = -1;
+        let max = 0;
         //let keys = Object.keys(data);
         for (k in data){
             console.log('k');
@@ -133,7 +133,7 @@ function updateBarPlot(country, xdata){
     }
 
     function getMin(data) {
-        let min = 1;
+        let min = 0;
         //keys = Object.keys(data);
         for (k in data){
             console.log('k');
