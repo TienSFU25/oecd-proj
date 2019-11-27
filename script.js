@@ -60,20 +60,26 @@ for (let i = 0; i < 2; i++) {
 }
 
 let tabs = container.append("div")
-    .attr("class", "flex-container")
+    .attr("class", "flex-container category-tabs")
     .attr("style", `width: ${tabWidth * tabNames.length}px`);
 
+let defaultColor = "bisque";
+
 for (let i = 0; i < tabNames.length; i++) {
+    let color = i == 0 ? filterColorScale[1] : defaultColor;
+
     tabs.append("div")
         .attr("class", "flex-item")
-        .attr("style", `height: ${tabHeight}px; background: ${filterColorScale[i]}`)
+        .attr("style", `height: ${tabHeight}px; background: ${color}`)
         .append("div")
         .text(tabNames[i])
         .on("click", function() {
             currentSelectedCategory = tabNames[i];
             currentSelectedSkill = dataBySkills.filter((v) => v.key == currentSelectedCategory)[0].values[0].key;
             
-            // drawBoxPlot();
+            tabs.selectAll(".flex-item").attr("style", `height: ${tabHeight}px; background: ${defaultColor}`);
+            d3.select(this.parentElement).attr("style", `height: ${tabHeight}px; background: ${filterColorScale[1]}`);
+
             updateBoxPlot();
             updateMap();
         });
