@@ -64,7 +64,7 @@ function plotCorrelation(svg, countrySel){
 
 
 
-
+    svg.attr("class", "donut");
 
     let width = singleViewWidth;
     let height = singleViewHeight;

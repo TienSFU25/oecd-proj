@@ -83,7 +83,7 @@ function updateBarPlot(country, xdata){
         w = numBARS*24+12;
     }
     else{
-        w = 1200;
+        w = 1000;
     }
     var margin = {top: 0, right: 0, bottom: 200, left: 50},
         width = w - margin.left - margin.right,
@@ -116,6 +116,7 @@ function updateBarPlot(country, xdata){
 
     svg.append("g")
         .attr("transform", "translate(0," + height + ")")
+        .attr("class", "lineplot-axis")
         .call(d3.axisBottom(x))
         .selectAll("text")
         .attr("y", 8)
