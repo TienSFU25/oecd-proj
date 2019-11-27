@@ -1,0 +1,47 @@
+
+1) Data Background (1 Minute)
+   ---------------
+    Our dataset is a subset of OECD Labour data. The subset is called Skills for jobs. Available at: www.stats.oecd.org 
+    
+    The raw data is in tabular form and consists of 174 Industrial Skills (across 18 industries) Categorized in 4 categories : Abilities, Skills, Knowledge and Workstyle
+    
+    Each skill is mapped to a value between +1 and -1. Positive values imply deficit (this +1 begin extreme deficit) and Negative values imply surplus (-1 being extreme surplus)
+    
+    Lets see what these 4 SKILL categories are:
+    
+    Knowledge: an organised body of information, which, if applied, makes adequate performance on the job possible. The kind of things you learn in a textbook.
+
+    Abilities: the proficient manual, verbal or mental manipulation of things. Abilities are usually easily evaluated with a test. Examples: operating a vehicle, speed of
+    decimal arithmetic...
+    
+    Skills: The power to perform an activity at the present time. This is different from “Abilities” in that it’s more abstract and difficult to measure. Examples are: “Social
+    perceptiveness” and “Planning and Coordination” Abilities
+    
+    Workstyles: A little different from the other three categories, this measures personal characteristics that affect how well a person does on a job. Examples:
+    persistence, attention to detail, conscientiousness.
+
+
+    
+2) Representation and layout (1 Minute 30 sec)
+   -----------------
+    4 labels to choose a Skill Category
+   
+    Box plot for a bird's eye view of skill distribution across countries
+    
+    Map plot shows the geographic distribution of a individual skill  
+
+    Line plot shows quantitative skill data for a specific countries (all skills under selected skill category)
+    
+    Donut plot shows most similar and most complementary country (across all skill category)
+    
+    
+3) Interactions
+   -------------
+  a)  Click : to select a SKILL category
+   
+  b)  Click : to select a individual skill (from all skills of SKILL Category chosen in a)
+   
+  c)  Click : to select a country to view its skills (under the SKILL Caterory chosen in a )
+  
+  
+  d) Hover : All elements show their respective data when mouse is hovered over them
