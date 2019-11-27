@@ -103,12 +103,15 @@ function plotCorrelation(svg, countrySel){
     // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
     var arcs1 = g.selectAll('weloveyoudrcarpendale')
         .data(data_ready)
-        .enter()
-        .append('path')
-        .attr('d', d3.arc()
-            .innerRadius(height*0.10)         // This is the size of the donut hole
-            .outerRadius(height*0.34)
-        )
+        .enter();
+
+    var arcD = d3.arc()
+        .innerRadius(height*0.10)         // This is the size of the donut hole
+        .outerRadius(height*0.34);
+
+    arcs1.append('path')
+        .attr('d', arcD)
+        .attr("id", (d, i) => `curve${i}`)
         .attr('fill', function(d){ return(color(d.data.key)) })
         .attr("stroke", "blue")
         .on("mouseover", function(d, i) {
@@ -123,14 +126,35 @@ function plotCorrelation(svg, countrySel){
         // .style("stroke-width", "1px")
         // .style("opacity", 0.7);
 
+    // svg.append("text")
+    //     .attr("id", "curve-text")
+    //     .append("textPath")
+    //     .attr("xlink:href", "#curve0")
+    //     .text("We go up, then we go down, then up again.");
+    
+    // svg.append("use")
+    //     .attr("id", "curve-line")
+    //     .attr("xlink:href", "#curve0");
+
+    arcs1.append("text")
+        .append("textPath")
+        .attr("xlink:href", (d, i) => `#curve${i}`)
+        .text((d, i) => d.data.key.split(' ')[0])
+        .attr("startOffset", (d, i) => {
+            var diff = d.endAngle - d.startAngle;
+            return `${10*(diff/1.3)}%`;
+        });
+
     var arcs2 = g2.selectAll('butwealsolovebananas')
         .data(data_ready2)
-        .enter()
-        .append('path')
+        .enter();
+
+    arcs2.append('path')
         .attr('d', d3.arc()
             .innerRadius(height*0.10)         // This is the size of the donut hole
             .outerRadius(height*0.34)
         )
+        .attr("id", (d, i) => `curve2${i}`)
         .attr('fill', function(d){ return(color(d.data.key)) })
         .attr("stroke", "red")
         .on("mouseover", function(d, i) {
@@ -143,14 +167,20 @@ function plotCorrelation(svg, countrySel){
             fadeTooltip();
         });
 
-        arcs2.append("text").text("HELLO");
+        // arcs2.append("text").text("HELLO");
         // .style("stroke-width", "1px")
         // .style("opacity", 0.7);
 
 
    // let colorMap={"Skills":"#7cff84", "Abilities":"#fff69a", "Knowledge":"#ff848a", "Workstyles":"#99ccff"};
-
-
+   arcs2.append("text")
+        .append("textPath")
+        .attr("xlink:href", (d, i) => `#curve2${i}`)
+        .text((d, i) => d.data.key.split(' ')[0])
+        .attr("startOffset", (d, i) => {
+            var diff = d.endAngle - d.startAngle;
+            return `${10*(diff/1.3)}%`;
+        });
 
     svg.append("rect")
         .attr("x",width/2-20)
@@ -221,8 +251,6 @@ function plotCorrelation(svg, countrySel){
         .attr("y", height*0.9 )
         .attr("dy", ".35em")
         .text("Negatively Correlated");
-
-
 
     // const annotations = [
     //     {
