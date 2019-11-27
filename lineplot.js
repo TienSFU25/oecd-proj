@@ -14,7 +14,7 @@ window.onload = function(){
     loadSkillData('https://raw.githubusercontent.com/TienSFU25/oecd-proj/master/parsed_skills_data.json');
     //loadCorrelationData('parsed_corr_data.json');
     loadCorrelationData('https://raw.githubusercontent.com/TienSFU25/oecd-proj/master/parsed_corr_data.json');
-    createDropDown("#dropdown");
+    //createDropDown("#dropdown");
 };
 
 function loadCorrelationData(path){
@@ -58,14 +58,14 @@ function createDropDown(div_id){
         //console.log(curCatData);
         //console.log(curCatData[currentC]);
         //console.log(cdata[currentC]);
-        countrySel = currentC;
+        //countrySel = currentC;
         updateBarPlot(currentC, curCatData[currentC]);
     })
 }
 
 function updateBarPlot(country, xdata){
     let newData=[];
-
+    countrySel = country;
     for (dd in xdata){
         //console.log(dd);
         newData.push({key:dd, value:xdata[dd]});
@@ -283,7 +283,7 @@ function updateBarPlot(country, xdata){
             return tooltip.style("visibility", "hidden");
         })
         .on("click", function(d){
-            console.log(d)
+            console.log(d);
             console.log(currentSelectedCategory)
         });
 

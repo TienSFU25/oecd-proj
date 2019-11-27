@@ -8,8 +8,8 @@ let textbox;
 
 const projection = d3.geoNaturalEarth1();
 const colorScale = d3.scaleQuantize()
-    .domain([-0.75, 0.75])
-    .range(d3.schemePuOr[6]);
+    .domain([-1, 1])
+    .range(d3.schemePuOr[8]);
 const effectiveThresholds = [-1].concat(colorScale.thresholds().concat([1]));
 
 // works on 1130 * 754, again we not trying to make this responsive
@@ -93,7 +93,6 @@ function drawWorldView() {
     textbox = quads[0]
         .append("g")
         .append("text")
-        .attr("class", "title")
         .attr("x", singleViewWidth / 20)
         .attr("y", singleViewHeight / 9);
 
@@ -109,20 +108,30 @@ function drawWorldView() {
         .attr("d", path)
         .style("stroke", "black")
         .style("stroke-width", 0.1)
-        .attr("class", "Country hover")
+        .attr("class", "Country")
         .style("opacity", .8);
     fitGeoInside(path, geographyData.features);
 
     // map hover handlers
     mapGroup.on("mouseover", function(data) {
-        if (data.total > -1) {
-            focusCountries(d3.select(this));
-            showTooltip(data.properties.name, `Value: ${data.total}`);    
-        }
+        focusCountries(d3.select(this));
+        showTooltip(data.properties.name, `Value: ${data.total}`);
     })
     .on("mouseleave", function() {
         focusNothing();
         fadeTooltip();
+    }).on("click", function(d){
+
+        //console.log();
+        let curCatData = cdata[currentSelectedCategory];
+        //console.log(curCatData);
+        //console.log(curCatData[currentC]);
+        //console.log(cdata[currentC]);
+        let currentC = d.properties.name;
+        if (currentC == 'USA'){
+            currentC = 'United States';
+        }
+        updateBarPlot(currentC, curCatData[currentC]);
     });
 
     // handlers for hovering over the legend
