@@ -95,6 +95,13 @@ body {margin-top: 20px}
   display: table;
 }
 
+.country-label {
+    position: absolute;
+    left: 50vw;
+    top: 94.3vh;
+    width: 48.5vw;
+}
+
 /* vertically center the text */
 .flex-item div {
     display: table-cell;
@@ -142,7 +149,7 @@ g.lineplot-axis {
     font-weight: bold;
 }
 
-.category-tabs .flex-item {
+.category-tabs .flex-item, .country-label {
     border-style: solid;
     border-width: .5;
     border-radius: 5px;

@@ -49,7 +49,18 @@ function updateBoxPlot() {
 
     let data = dataBySkills.filter(v => {
         return v.key == currentSelectedCategory;
-    })[0].values;
+    })[0].values.sort((a, b) => {
+        const bandA = a.key.toUpperCase();
+        const bandB = b.key.toUpperCase();
+        
+        let comparison = 0;
+        if (bandA > bandB) {
+            comparison = 1;
+        } else if (bandA < bandB) {
+            comparison = -1;
+        }
+        return comparison;
+    });
 
     // Compute quartiles, median, inter quantile range min and max --> these info are then used to draw the box.
     var sumstat = data.map(keyValuePair => {
@@ -69,7 +80,7 @@ function updateBoxPlot() {
         };
     });
 
-    let domain = data.map((v) => v.key);
+    let domain = data.map((v) => v.key).sort();
 
     // update the X axis
     let boxPlotWidth = singleItemWidth * domain.length + 30;

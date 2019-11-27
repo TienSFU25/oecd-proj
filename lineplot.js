@@ -70,6 +70,20 @@ function updateBarPlot(country, xdata){
         //console.log(dd);
         newData.push({key:dd, value:xdata[dd]});
     }
+
+    newData = newData.sort((a, b) => {
+        const bandA = a.key.toUpperCase();
+        const bandB = b.key.toUpperCase();
+      
+        let comparison = 0;
+        if (bandA > bandB) {
+          comparison = 1;
+        } else if (bandA < bandB) {
+          comparison = -1;
+        }
+        return comparison;
+    });
+
     let mywidth = singleViewWidth    ;
     let myheight = singleViewHeight;
     console.log("XXXXXXXXXXXXXXX");
@@ -93,12 +107,12 @@ function updateBarPlot(country, xdata){
     //let svg=d3.select("#lineplot");
     let svg = quads[1];
 
-    var tooltip = d3.select("body")
-        .append("div")
-        .style("position", "absolute")
-        .style("z-index", "10")
-        .style("visibility", "hidden")
-        .text("a simple tooltip");
+    // var tooltip = d3.select("body")
+    //     .append("div")
+    //     .style("position", "absolute")
+    //     .style("z-index", "10")
+    //     .style("visibility", "hidden")
+    //     .text("a simple tooltip");
 
     svg.selectAll("*").remove();
 
@@ -108,9 +122,22 @@ function updateBarPlot(country, xdata){
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
 
+    var xAxisDomain = d3.map(xdata).keys().sort((a, b) => {
+        const bandA = a.toUpperCase();
+        const bandB = b.toUpperCase();
+      
+        let comparison = 0;
+        if (bandA > bandB) {
+          comparison = 1;
+        } else if (bandA < bandB) {
+          comparison = -1;
+        }
+        return comparison;
+    });
+
     // Add x axis
     var x = d3.scaleBand()
-        .domain(d3.map(xdata).keys())
+        .domain(xAxisDomain)
         .rangeRound([margin.left, width])
         .padding(0.1);
 
@@ -261,31 +288,18 @@ function updateBarPlot(country, xdata){
         .attr("fill",'white')
         .attr('opacity', '0.3')
         .on("mouseover", function(d,i){
-            //console.log("Mouse over");
-            //console.log(d['Country']);
-            //console.log(d);
-            let thise = d3.select(this);
-            thise.transition()
-                .duration('50')
-                .attr('opacity', '.8');
-
-            return tooltip.style("visibility", "visible").text(d.key);
+            showTooltip(d.key, d.value);
         })
         .on('mousemove', function(){
-            return tooltip.style("top",
-                (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");
+            // return tooltip.style("top",
+            //     (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");
         })
         .on('mouseout', function(d,i){
-            //console.log("Bye from ");
-            let thise=d3.select(this);
-            thise.transition()
-                .duration('50')
-                .attr('opacity', '0.3');
-            return tooltip.style("visibility", "hidden");
+            fadeTooltip();
         })
         .on("click", function(d){
-            console.log(d);
-            console.log(currentSelectedCategory)
+            currentSelectedSkill = d.key;
+            updateMap();
         });
 
 

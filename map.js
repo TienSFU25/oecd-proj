@@ -134,6 +134,9 @@ function drawWorldView() {
         if (currentC == 'USA'){
             currentC = 'United States';
         }
+
+        countryLabel.text(currentC);
+
         if(countries.indexOf(currentC) > -1) {
             updateBarPlot(currentC, curCatData[currentC]);
         }

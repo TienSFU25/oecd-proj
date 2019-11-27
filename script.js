@@ -84,3 +84,9 @@ for (let i = 0; i < tabNames.length; i++) {
             updateMap();
         });
 }
+
+var countryLabel = container.append("div")
+        .attr("class", "flex-item country-label")
+        .attr("style", `height: ${tabHeight}px; background: ${defaultColor}`)
+        .append("div")
+        .text("Canada");
