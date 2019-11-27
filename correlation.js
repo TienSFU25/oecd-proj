@@ -101,7 +101,7 @@ function plotCorrelation(svg, countrySel){
     var data_ready2 = pie2(d3.entries(NCorr));
 
     // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
-    var arcs1 = g.selectAll('whatever')
+    var arcs1 = g.selectAll('weloveyoudrcarpendale')
         .data(data_ready)
         .enter()
         .append('path')
@@ -123,7 +123,7 @@ function plotCorrelation(svg, countrySel){
         // .style("stroke-width", "1px")
         // .style("opacity", 0.7);
 
-    var arcs2 = g2.selectAll('whatever')
+    var arcs2 = g2.selectAll('butwealsolovebananas')
         .data(data_ready2)
         .enter()
         .append('path')
