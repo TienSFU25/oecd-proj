@@ -131,7 +131,9 @@ function drawWorldView() {
         if (currentC == 'USA'){
             currentC = 'United States';
         }
-        updateBarPlot(currentC, curCatData[currentC]);
+        if(countries.indexOf(currentC) > -1) {
+            updateBarPlot(currentC, curCatData[currentC]);
+        }
     });
 
     // handlers for hovering over the legend
