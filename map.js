@@ -93,6 +93,7 @@ function drawWorldView() {
     textbox = quads[0]
         .append("g")
         .append("text")
+        .attr("class", "title")
         .attr("x", singleViewWidth / 20)
         .attr("y", singleViewHeight / 9);
 
@@ -114,8 +115,10 @@ function drawWorldView() {
 
     // map hover handlers
     mapGroup.on("mouseover", function(data) {
-        focusCountries(d3.select(this));
-        showTooltip(data.properties.name, `Value: ${data.total}`);
+        if (data.total > -1) {
+            focusCountries(d3.select(this));
+            showTooltip(data.properties.name, `Value: ${data.total}`); 
+        }
     })
     .on("mouseleave", function() {
         focusNothing();

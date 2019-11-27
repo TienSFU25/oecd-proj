@@ -44,7 +44,7 @@ for (let i = 0; i < 2; i++) {
         quadContainer.on("mousewheel", scrollHorizontally.bind(quadContainer.node()), false);
         
         let quad = quadContainer.append("svg")
-            .attr("width", singleViewWidth)
+            .attr("width", singleViewWidth-8)
             .attr("height", singleViewHeight);
 
         // just to make a checkered layout

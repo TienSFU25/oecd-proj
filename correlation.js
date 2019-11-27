@@ -51,16 +51,16 @@ function plotCorrelation(svg, countrySel){
         NCorr[temp+" \n"+c] = -ds[temp];
     }
 
-    console.log("Order");
-    console.log(orderofSC);
-    console.log("Positive:corr");
-    console.log(listPCorr);
-    console.log("Negative:corr");
-    console.log(listNCorr);
-    console.log("Positive:vals");
-    console.log(PCorr);
-    console.log("Negative:vals");
-    console.log(NCorr)  ;
+    // console.log("Order");
+    // console.log(orderofSC);
+    // console.log("Positive:corr");
+    // console.log(listPCorr);
+    // console.log("Negative:corr");
+    // console.log(listNCorr);
+    // console.log("Positive:vals");
+    // console.log(PCorr);
+    // console.log("Negative:vals");
+    // console.log(NCorr)  ;
 
 
 
@@ -100,15 +100,6 @@ function plotCorrelation(svg, countrySel){
     var data_ready = pie1(d3.entries(PCorr));
     var data_ready2 = pie2(d3.entries(NCorr));
 
-    var tooltip = d3.select("body")
-        .append("div")
-        .style("position", "absolute")
-        .style("z-index", "10")
-        .style("visibility", "hidden")
-        .text("a simple tooltip");
-
-
-
     // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
     var arcs1 = g.selectAll('whatever')
         .data(data_ready)
@@ -121,23 +112,13 @@ function plotCorrelation(svg, countrySel){
         .attr('fill', function(d){ return(color(d.data.key)) })
         .attr("stroke", "blue")
         .on("mouseover", function(d, i) {
-            console.log(d);
-            let thise = d3.select(this);
-            thise.transition()
-                .duration('50')
-                .attr('opacity', '0.5');
-            return tooltip.style("visibility", "visible").text(d.data.key);
+            showTooltip(d.data.key.split(' ')[0], ``); 
         })
         .on("mousemove", function(){
-            return tooltip.style("top",
-                (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");
+            moveTooltipToCursor();
         })
         .on("mouseout", function (d,i) {
-            let thise=d3.select(this);
-            thise.transition()
-                .duration('50')
-                .attr('opacity', '0.8');
-            return tooltip.style("visibility", "hidden");
+            fadeTooltip();
         });
         // .style("stroke-width", "1px")
         // .style("opacity", 0.7);
@@ -153,23 +134,13 @@ function plotCorrelation(svg, countrySel){
         .attr('fill', function(d){ return(color(d.data.key)) })
         .attr("stroke", "red")
         .on("mouseover", function(d, i) {
-            console.log(d);
-            let thise = d3.select(this);
-            thise.transition()
-                .duration('50')
-                .attr('opacity', '0.5');
-            return tooltip.style("visibility", "visible").text(d.data.key);
+            showTooltip(d.data.key.split(' ')[0], ``); 
         })
         .on("mousemove", function(){
-            return tooltip.style("top",
-                (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");
+            moveTooltipToCursor();
         })
         .on("mouseout", function (d,i) {
-            let thise=d3.select(this);
-            thise.transition()
-                .duration('50')
-                .attr('opacity', '0.8');
-            return tooltip.style("visibility", "hidden");
+            fadeTooltip();
         });
 
         arcs2.append("text").text("HELLO");

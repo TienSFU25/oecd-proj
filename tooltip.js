@@ -16,8 +16,7 @@ const showTooltip = (line1, line2) => {
         </div>`;
 
     tooltip.html(tooltipHtml)
-        .style("left", (d3.event.pageX) + "px")		
-        .style("top", (d3.event.pageY) + "px");	
+    moveTooltipToCursor();
 };
 
 const fadeTooltip = () => {
@@ -25,3 +24,8 @@ const fadeTooltip = () => {
         .duration(500)		
         .style("opacity", 0);
 };
+
+const moveTooltipToCursor = () => {
+    tooltip.style("left", (d3.event.pageX) + "px")		
+    .style("top", (d3.event.pageY) + "px");	
+}
