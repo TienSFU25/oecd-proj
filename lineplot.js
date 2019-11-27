@@ -1,5 +1,5 @@
 
-var countries  = ['Austria', 'Austrailia','Belgium', 'Czech Republic','Canada', 'France', 'Denmark', 'Finland', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Ireland', 'Italy', 'Luxembourg', 'Mexico', 'Netherlands', 'New Zealand', 'Norway', 'Poland', 'Portugal', 'Slovak Republic', 'Spain', 'Sweden', 'Switzerland', 'Turkey', 'United Kingdom', 'United States', 'Argentina', 'Brazil', 'Bulgaria', 'Chile', 'Cyprus', 'Estonia', 'Latvia', 'Lithuania', 'Peru', 'Romania', 'Slovenia', 'South Africa'];//, 'Malaysia'];
+var countries  = ['Austria', 'Australia','Belgium', 'Czech Republic','Canada', 'France', 'Denmark', 'Finland', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Ireland', 'Italy', 'Luxembourg', 'Mexico', 'Netherlands', 'New Zealand', 'Norway', 'Poland', 'Portugal', 'Slovak Republic', 'Spain', 'Sweden', 'Switzerland', 'Turkey', 'United Kingdom', 'United States', 'Argentina', 'Brazil', 'Bulgaria', 'Chile', 'Cyprus', 'Estonia', 'Latvia', 'Lithuania', 'Peru', 'Romania', 'Slovenia', 'South Africa'];//, 'Malaysia'];
 var _cdata;
 var corrData;
 var cdata =[];
